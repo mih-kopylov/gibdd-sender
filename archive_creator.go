@@ -29,7 +29,7 @@ func createArchive(imagesDirectory string, images []string) string {
 		if err != nil {
 			log.Panic(err)
 		}
-		log.Println("file added", imageFileName, i*100/len(images), "%")
+		log.Println("file added", imageFileName, (i+1)*100/len(images), "%")
 	}
 	return archiveName
 }
