@@ -13,7 +13,7 @@ import (
 	"path/filepath"
 )
 
-func sendMessage(imagesDirectory string, configuratoin Configuration, timeAddress TimeAddress, archiveFileName string) {
+func sendMessageToMvd(imagesDirectory string, configuratoin Configuration, timeAddress TimeAddress, archiveFileName string) {
 	log.Println("sending request with archive", archiveFileName)
 
 	request := createRequest(imagesDirectory, configuratoin, timeAddress, archiveFileName)

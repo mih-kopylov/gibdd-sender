@@ -1,14 +1,23 @@
 package main
 
-import "os"
+import (
+	"log"
+	"os"
+	"strings"
+)
 
 func main() {
-	println("hello")
 	imagesDirectory := os.Args[1]
 	configFile := os.Args[2]
 	configuration := readConfiguration(configFile)
 	images := getImages(imagesDirectory)
 	archive := createArchive(imagesDirectory, images)
 	timeAddress := getTimeAddress(imagesDirectory)
-	sendMessage(imagesDirectory, configuration, timeAddress, archive)
+	switch rec := strings.ToLower(configuration.Receiver); rec {
+	case "mvd":
+		log.Println("sending a message to MVD receiver")
+		sendMessageToMvd(imagesDirectory, configuration, timeAddress, archive)
+	default:
+		log.Fatal("Unsupported receiver: ", rec)
+	}
 }

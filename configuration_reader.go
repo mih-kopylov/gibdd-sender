@@ -28,4 +28,5 @@ type Configuration struct {
 	RegionId        string `json:"regionId"`
 	Subunit         string `json:"subunit"`
 	MessageTemplate string `json:"messageTemplate"`
+	Receiver        string `json:"receiver"`
 }
