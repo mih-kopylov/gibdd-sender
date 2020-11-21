@@ -13,10 +13,10 @@ import (
 	"path/filepath"
 )
 
-func sendMessage(imagesDirectory string, configFile string, timeAddress TimeAddress, archiveFileName string) {
+func sendMessage(imagesDirectory string, configuratoin Configuration, timeAddress TimeAddress, archiveFileName string) {
 	log.Println("sending request with archive", archiveFileName)
 
-	request := createRequest(imagesDirectory, configFile, timeAddress, archiveFileName)
+	request := createRequest(imagesDirectory, configuratoin, timeAddress, archiveFileName)
 	client := &http.Client{}
 	resp, err := client.Do(request)
 	if err != nil {
@@ -45,9 +45,8 @@ func sendMessage(imagesDirectory string, configFile string, timeAddress TimeAddr
 	}
 }
 
-func createRequest(imagesDirectory string, configFile string, timeAddress TimeAddress, archiveFileName string) *http.Request {
-	personalData := readPersonalData(configFile)
-	message := formatMessage(personalData.MessageTemplate, timeAddress)
+func createRequest(imagesDirectory string, configuration Configuration, timeAddress TimeAddress, archiveFileName string) *http.Request {
+	message := formatMessage(configuration.MessageTemplate, timeAddress)
 
 	payload := new(bytes.Buffer)
 	payloadWriter := multipart.NewWriter(payload)
@@ -63,14 +62,14 @@ func createRequest(imagesDirectory string, configFile string, timeAddress TimeAd
 	if err != nil {
 		log.Panic(err)
 	}
-	_ = payloadWriter.WriteField("declarant[f]", personalData.LastName)
-	_ = payloadWriter.WriteField("declarant[i]", personalData.Name)
-	_ = payloadWriter.WriteField("declarant[o]", personalData.MiddleName)
-	_ = payloadWriter.WriteField("answer_addr[email]", personalData.Email)
+	_ = payloadWriter.WriteField("declarant[f]", configuration.LastName)
+	_ = payloadWriter.WriteField("declarant[i]", configuration.Name)
+	_ = payloadWriter.WriteField("declarant[o]", configuration.MiddleName)
+	_ = payloadWriter.WriteField("answer_addr[email]", configuration.Email)
 	_ = payloadWriter.WriteField("version", "2")
-	_ = payloadWriter.WriteField("phone", personalData.Phone)
-	_ = payloadWriter.WriteField("region_id", personalData.RegionId)
-	_ = payloadWriter.WriteField("address[subunit]", personalData.Subunit)
+	_ = payloadWriter.WriteField("phone", configuration.Phone)
+	_ = payloadWriter.WriteField("region_id", configuration.RegionId)
+	_ = payloadWriter.WriteField("address[subunit]", configuration.Subunit)
 	_ = payloadWriter.WriteField("message", message)
 	request, _ := http.NewRequest(http.MethodPost, "https://mvd.ru/api/v2/request", payload)
 	request.Header.Add("Content-Type", "multipart/form-data; boundary="+payloadWriter.Boundary())
@@ -78,19 +77,6 @@ func createRequest(imagesDirectory string, configFile string, timeAddress TimeAd
 	request.Header.Add("User-Agent", "android")
 	request.Header.Add("Application", "sitesoft")
 	return request
-}
-
-func readPersonalData(configFile string) PersonalData {
-	fileContent, err := ioutil.ReadFile(configFile)
-	if err != nil {
-		log.Panic(err)
-	}
-	var result PersonalData
-	err = json.Unmarshal(fileContent, &result)
-	if err != nil {
-		log.Panic(err)
-	}
-	return result
 }
 
 func formatMessage(messageTemplate string, timeaddress TimeAddress) string {
@@ -104,17 +90,6 @@ func formatMessage(messageTemplate string, timeaddress TimeAddress) string {
 		log.Panic(err)
 	}
 	return buffer.String()
-}
-
-type PersonalData struct {
-	LastName        string `json:"lastName"`
-	Name            string `json:"name"`
-	MiddleName      string `json:"middleName"`
-	Email           string `json:"email"`
-	Phone           string `json:"phone"`
-	RegionId        string `json:"regionId"`
-	Subunit         string `json:"subunit"`
-	MessageTemplate string `json:"messageTemplate"`
 }
 
 type ResponseDto struct {
