@@ -10,7 +10,12 @@ import (
 	"os"
 )
 
-func resizeImage(imageFile *os.File) io.Reader {
+func resizeImage(imageFileName string) io.Reader {
+	imageFile, err := os.Open(imageFileName)
+	if err != nil {
+		log.Panic(err)
+	}
+	defer imageFile.Close()
 	decodedImage, _, err := image.Decode(imageFile)
 	if err != nil {
 		log.Panic(err)

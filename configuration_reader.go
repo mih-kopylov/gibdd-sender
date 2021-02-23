@@ -29,4 +29,5 @@ type Configuration struct {
 	Subunit         string `json:"subunit"`
 	MessageTemplate string `json:"messageTemplate"`
 	Receiver        string `json:"receiver"`
+	ArchiveType     string `json:"archiveType"`
 }

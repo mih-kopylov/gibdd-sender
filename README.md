@@ -15,7 +15,7 @@ Used things:
 
 The utility:
 
-* finds files with `jpg` and `jpeg` extensions
+* searches for files with `jpg` and `jpeg` extensions
 * resizes them to 2000 px width, so that more than 50 files can be sent in a single request
 * creates a zip archive with these files
 * sends it to MVD
@@ -40,9 +40,18 @@ When it succeeds a confirmation email will be received from MVD with message det
   "phone": "",
   "regionId": "",
   "subunit": "",
+  "receiver": "",
+  "archiveType": "",
   "messageTemplate": ""
 }
 ```
+
+Supported values for `receiver`: 
+* `mvd`
+
+Supported values for `archiveType`:
+* `zip`
+* `pdf`
 
 To get list of regions run `GET https://mvd.ru/api/address/subject`, choose yours and use its `code`
 
